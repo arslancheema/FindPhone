@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -48,9 +49,21 @@ public class MyTrackers extends AppCompatActivity {
 
         trackerAdapter = new TrackerAdapter(this, R.layout.single_row_contact, listTrackers);
 
-        listView .setAdapter(trackerAdapter);
+        listView.setAdapter(trackerAdapter);
 
         refreshDb();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Toast.makeText(getApplicationContext(),"Clicked: " + listTrackers.get(position).phoneNumber,Toast.LENGTH_SHORT).show();
+                GlobalInfo.myTrackers.remove(listTrackers.get(position).phoneNumber);
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                databaseReference.child("Users").child(listTrackers.get(position).phoneNumber)
+                        .child("Finders").child(GlobalInfo.phoneNumber).removeValue();
+                refreshDb();
+            }
+        });
     }
 
     @Override
@@ -163,7 +176,7 @@ public class MyTrackers extends AppCompatActivity {
     private void refreshDb() {
         listTrackers.clear();
         for(Map.Entry m : GlobalInfo.myTrackers.entrySet()){
-            listTrackers.add(new AdapterItems(m.getKey().toString(),m.getValue().toString()));
+            listTrackers.add(new AdapterItems(m.getValue().toString(),m.getKey().toString()));
         }
         trackerAdapter.notifyDataSetChanged();
     }
