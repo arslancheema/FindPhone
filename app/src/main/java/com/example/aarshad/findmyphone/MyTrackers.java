@@ -61,6 +61,8 @@ public class MyTrackers extends AppCompatActivity {
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 databaseReference.child("Users").child(listTrackers.get(position).phoneNumber)
                         .child("Finders").child(GlobalInfo.phoneNumber).removeValue();
+                GlobalInfo globalInfo = new GlobalInfo(MyTrackers.this);
+                globalInfo.saveData();
                 refreshDb();
             }
         });
@@ -79,6 +81,8 @@ public class MyTrackers extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.goback:
+                GlobalInfo globalInfo = new GlobalInfo(this);
+                globalInfo.saveData();
                 finish();
                 return true;
             case R.id.add:
@@ -165,6 +169,10 @@ public class MyTrackers extends AppCompatActivity {
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                         databaseReference.child("Users").child(contactNumber).child("Finders")
                                 .child(GlobalInfo.phoneNumber).setValue(true);
+
+                        GlobalInfo globalInfo = new GlobalInfo(this);
+                        globalInfo.saveData();
+
                         refreshDb();
 
                     }

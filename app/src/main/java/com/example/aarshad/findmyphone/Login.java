@@ -21,7 +21,7 @@ public class Login extends AppCompatActivity {
     public void buttonNextClick(View view){
         GlobalInfo.phoneNumber = GlobalInfo.formatPhoneNumber(editTextNumber.getText().toString());
         GlobalInfo.updatesInfo(GlobalInfo.phoneNumber);
-
+        finish();
         Intent i = new Intent(this, MyTrackers.class);
         startActivity(i);
     }
