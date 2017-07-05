@@ -3,6 +3,7 @@ package com.example.aarshad.findmyphone;
 import android.*;
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Build;
@@ -31,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
             LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, trackLocation);
+        }
+        if (!MyService.isRunning){
+            Intent i = new Intent(this, MyService.class);
+            startService(i);
         }
     }
 
