@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -52,6 +54,15 @@ public class MainActivity extends AppCompatActivity {
         checkLocationPermission();
 
         ListView listView = (ListView) findViewById(R.id.listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                AdapterItems adapterItems = listTrackers.get(position);
+                Intent mapIntent = new Intent(getApplicationContext(),MapsActivity.class);
+                mapIntent.putExtra("phone_number",adapterItems.phoneNumber);
+                startActivity(mapIntent);
+            }
+        });
         trackerAdapter = new TrackerAdapter(this, R.layout.single_row_contact, listTrackers);
         listView.setAdapter(trackerAdapter);
 

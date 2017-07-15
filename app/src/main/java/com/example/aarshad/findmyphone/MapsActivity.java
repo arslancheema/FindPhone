@@ -1,7 +1,10 @@
 package com.example.aarshad.findmyphone;
 
+import android.database.Cursor;
+import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -9,15 +12,64 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    DatabaseReference mDatabaseReference;
+    LatLng location;
+    String lastOnline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        Bundle b = getIntent().getExtras();
+        loadLocation(b.getString("phone_number"));
+
+    }
+
+    void loadLocation (String phoneNumber){
+        mDatabaseReference.child("Users").child(phoneNumber).
+                child("Location").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
+                double lat = Double.parseDouble(td.get("lat").toString());
+                double lng = Double.parseDouble(td.get("lng").toString());
+
+                Toast.makeText(getApplicationContext(),"Lat" + String.valueOf(lat) + " LNG: "+ String.valueOf(lng),Toast.LENGTH_SHORT).show();
+                lastOnline = td.get("LastOnlineDate").toString();
+                location = new LatLng(lat,lng);
+
+                loadMap();
+
+
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                // Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+
+    }
+
+    void loadMap (){
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -39,8 +91,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        //location = new LatLng(39.9042,116.4074);
+        mMap.addMarker(new MarkerOptions().position(location).title("Location:" + location.toString() ));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location,14));
+        mMap.getUiSettings().setZoomControlsEnabled(true);
     }
+
 }
