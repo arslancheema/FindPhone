@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                Toast.makeText(getApplicationContext(),"Listned to Finders",Toast.LENGTH_SHORT).show();
-
                 Map<String, Object> td = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 listTrackers.clear();
@@ -88,8 +86,6 @@ public class MainActivity extends AppCompatActivity {
                     trackerAdapter.notifyDataSetChanged();
                     return;
                 }
-                // List<Object> values = td.values();
-
                 // get all contact to list
                 ArrayList<AdapterItems> listContact = new ArrayList<AdapterItems>();
                 Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
@@ -101,10 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     ));
 
                 }
-
-// if the name is save chane his text
                 // case who find me
-                String tinfo;
+
                 for (  String Numbers : td.keySet()) {
                     for (AdapterItems cs : listContact) {
 

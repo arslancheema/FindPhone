@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Created by aarshad on 7/16/17.
+ * Class to get the GPS cordinates
  */
 
 public class GPSHelper {
